@@ -1,8 +1,8 @@
 //% weight=100 color=#008080 icon="\uf043" block="Inky:Bit"
 namespace inkybit {
     
-    const WIDTH: number = 250
-    const HEIGHT: number = 122
+    const WIDTH: number = 400
+    const HEIGHT: number = 300
 
     let UPSIDE_DOWN: boolean = false
 
@@ -66,7 +66,7 @@ namespace inkybit {
         //% block="white"
         White = 0,
         //% block="accent"
-        Accent = 2
+        //Accent = 2
     }
 
     export enum PixelSize {
