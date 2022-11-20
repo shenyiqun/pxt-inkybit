@@ -10,40 +10,6 @@ using namespace pxt;
 #define CS uBit.io.P8    // MICROBIT_PIN_P8
 #define RESET uBit.io.P2 // MICROBIT_PIN_P2
 #define BUSY uBit.io.P16 // MICROBIT_PIN_P16
-#if 0
-#define DRIVER_CONTROL 0x01
-#define GATE_VOLTAGE 0x03
-#define SOURCE_VOLTAGE 0x04
-#define DISPLAY_CONTROL 0x07
-#define NON_OVERLAP 0x0B
-#define BOOSTER_SOFT_START 0x0C
-#define GATE_SCAN_START 0x0F
-#define DEEP_SLEEP 0x10
-#define DATA_MODE 0x11
-#define SW_RESET 0x12
-#define TEMP_WRITE 0x1A
-#define TEMP_READ 0x1B
-#define TEMP_CONTROL 0x1C
-#define TEMP_LOAD 0x1D
-#define MASTER_ACTIVATE 0x20
-#define DISP_CTRL1 0x21
-#define DISP_CTRL2 0x22
-#define WRITE_RAM 0x24
-#define WRITE_ALTRAM 0x26
-#define READ_RAM 0x25
-#define VCOM_SENSE 0x28
-#define VCOM_DURATION 0x29
-#define WRITE_VCOM 0x2C
-#define READ_OTP 0x2D
-#define WRITE_LUT 0x32
-#define WRITE_DUMMY 0x3A
-#define WRITE_GATELINE 0x3B
-#define WRITE_BORDER 0x3C
-#define SET_RAMXPOS 0x44
-#define SET_RAMYPOS 0x45
-#define SET_RAMXCOUNT 0x4E
-#define SET_RAMYCOUNT 0x4F
-#endif
 
 #define CS_ACTIVE 0
 #define CS_INACTIVE 1
@@ -91,14 +57,14 @@ using namespace pxt;
 
 const unsigned char lut_vcom0[] =
 {
-    0x00, 0x08, 0x08, 0x00, 0x00, 0x02,  
+  0x00, 0x08, 0x08, 0x00, 0x00, 0x02,  
   0x00, 0x0F, 0x0F, 0x00, 0x00, 0x01, 
   0x00, 0x08, 0x08, 0x00, 0x00, 0x02, 
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00,   
+  0x00, 0x00,   
 
 };
 const unsigned char lut_ww[] ={
@@ -159,7 +125,6 @@ SPI spi(MOSI, MISO, SCK);
 
 bool initialized = false;
 
-
 namespace inkybit {
     void busyWait() {
         while(BUSY.getDigitalValue()) {
@@ -203,25 +168,6 @@ namespace inkybit {
 	    }
         CS.setDigitalValue(CS_INACTIVE);
     }
-#if 1
-    void clear(void) {
-        spiCommand(RESOLUTION_SETTING);
-        spiData(COLS >> 8, 1);
-        spiData(COLS & 0xff, 1);
-        spiData(ROWS >> 8, 1);        
-        spiData(ROWS & 0xff, 1);
-
-        spiCommand(DATA_START_TRANSMISSION_1);           
-        uBit.sleep(2);
-        spiData(0xFF, COLS / 8 * ROWS);  
-        uBit.sleep(2);
-        
-        spiCommand(DATA_START_TRANSMISSION_2);           
-        uBit.sleep(2);
-        spiData(0xFF, COLS / 8 * ROWS);  
-        uBit.sleep(2);
-    }
-#endif
 
     //%
     void clear() {
@@ -252,57 +198,27 @@ namespace inkybit {
         buf_b[offset] = byte_b;
         //buf_r[offset] = byte_r;
     }
-/*
-    void show() {
-        RESET.setDigitalValue(0);
-        uBit.sleep(100);
-        RESET.setDigitalValue(1);
-        uBit.sleep(100);
 
-        spiCommand(0x12);
-        uBit.sleep(500);
-        busyWait();
-
-        spiCommand(DRIVER_CONTROL, {ROWS - 1, (ROWS - 1) >> 8, 0x00});
-        spiCommand(WRITE_DUMMY, {0x1B});
-        spiCommand(WRITE_GATELINE, {0x0B});
-        spiCommand(DATA_MODE, {0x03});
-        spiCommand(SET_RAMXPOS, {0x00, COLS / 8 - 1});
-        spiCommand(SET_RAMYPOS, {0x00, 0x00, (ROWS - 1) & 0xFF, (ROWS - 1) >> 8});
-        spiCommand(WRITE_VCOM, {0x70});
-        spiCommand(WRITE_LUT, luts, sizeof(luts));
-        spiCommand(SET_RAMXCOUNT, {0x00});
-        spiCommand(SET_RAMYCOUNT, {0x00, 0x00});
-        
-        spiCommand(WRITE_RAM);
-        spiData(buf_b, (COLS / 8) * ROWS);
-        spiCommand(WRITE_ALTRAM);
-        spiData(buf_r, (COLS / 8) * ROWS);
-
-        busyWait();
-        spiCommand(MASTER_ACTIVATE);
-    }
-*/
-    //%
-    void setlut(void) {
+    void setLut() {
         unsigned int count;     
 
         spiCommand(LUT_FOR_VCOM);                            //vcom
-        spiData(lut_vcom0, 36);
+        spiData(lut_vcom0, 44);
         
         spiCommand(LUT_WHITE_TO_WHITE);                      //ww --
-        spiData(lut_ww, 36); 
+        spiData(lut_ww, 42); 
         
         spiCommand(LUT_BLACK_TO_WHITE);                      //bw r
-        spiData(lut_bw, 36);
+        spiData(lut_bw, 42);
 
         spiCommand(LUT_WHITE_TO_BLACK);                      //wb w
-        spiData(lut_bb, 36);
+        spiData(lut_bb, 42);
 
         spiCommand(LUT_BLACK_TO_BLACK);                      //bb b
-        spiData(lut_wb, 36);
+        spiData(lut_wb, 42);
     }
 
+    //%
     void show() {
         spiCommand(RESOLUTION_SETTING);
         spiData(COLS >> 8, 1);        
@@ -326,7 +242,7 @@ namespace inkybit {
             uBit.sleep(2);                 
         }
 
-        //setlut();
+        setLut();
         spiCommand(DISPLAY_REFRESH); 
         uBit.sleep(100);
         busyWait();
@@ -357,7 +273,6 @@ namespace inkybit {
         //buf_r = (uint8_t *)malloc((COLS / 8) * ROWS);
         clear();
 
-        /* EPD hardware init start */
         reset();
         spiCommand(0x01);
         spiData(0x03, 1);                   // VDS_EN, VDG_EN
@@ -389,7 +304,7 @@ namespace inkybit {
         spiCommand(0X50);                   // VCOM AND DATA INTERVAL SETTING
         spiData(0x97, 1);                   // 97white border 77black border    VBDF 17|D7 VBDW 97 VBDB 57    VBDF F7 VBDW 77 VBDB 37  VBDR B7
 
-        setlut();
+        setLut();
 
         initialized = true;
     }
