@@ -325,7 +325,7 @@ namespace inkybit {
             uBit.sleep(2);                 
         }
 
-        setlut();
+        //setlut();
         spiCommand(DISPLAY_REFRESH); 
         uBit.sleep(100);
         busyWait();
