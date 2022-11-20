@@ -284,6 +284,32 @@ namespace inkybit {
     }
 */
 
+    void setlut(void) {
+        unsigned int count;     
+
+        spiCommand(LUT_FOR_VCOM);                            //vcom
+        spiData(lut_vcom0, 36);
+        
+        spiCommand(LUT_WHITE_TO_WHITE);                      //ww --
+        spiData(lut_ww, 36); 
+        
+        spiCommand(LUT_BLACK_TO_WHITE);                      //bw r
+        spiData(lut_bw, 36);
+
+        spiCommand(LUT_WHITE_TO_BLACK);                      //wb w
+        spiData(lut_bb, 36);
+
+        spiCommand(LUT_BLACK_TO_BLACK);                      //bb b
+        spiData(lut_wb, 36);
+    }
+/*
+    void show() {
+        setlut();
+        spiCommand(DISPLAY_REFRESH); 
+        uBit.sleep(100);
+        busyWait();
+    }
+*/
     void show() {
         spiCommand(RESOLUTION_SETTING);
         spiData(COLS >> 8, 1);        
@@ -307,28 +333,10 @@ namespace inkybit {
             uBit.sleep(2);                 
         }
 
-        spiCommand(0x12); 
+        setlut();
+        spiCommand(DISPLAY_REFRESH); 
         uBit.sleep(100);
         busyWait();
-    }
-
-    void setlut(void) {
-        unsigned int count;     
-
-        spiCommand(LUT_FOR_VCOM);                            //vcom
-        spiData(lut_vcom0, 36);
-        
-        spiCommand(LUT_WHITE_TO_WHITE);                      //ww --
-        spiData(lut_ww, 36); 
-        
-        spiCommand(LUT_BLACK_TO_WHITE);                      //bw r
-        spiData(lut_bw, 36);
-
-        spiCommand(LUT_WHITE_TO_BLACK);                      //wb w
-        spiData(lut_bb, 36);
-
-        spiCommand(LUT_BLACK_TO_BLACK);                      //bb b
-        spiData(lut_wb, 36);
     }
 
     void reset(void) {
