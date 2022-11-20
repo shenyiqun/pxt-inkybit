@@ -252,7 +252,6 @@ namespace inkybit {
         //buf_r[offset] = byte_r;
     }
 /*
-    //%
     void show() {
         RESET.setDigitalValue(0);
         uBit.sleep(100);
@@ -283,7 +282,7 @@ namespace inkybit {
         spiCommand(MASTER_ACTIVATE);
     }
 */
-
+    //%
     void setlut(void) {
         unsigned int count;     
 
@@ -302,14 +301,7 @@ namespace inkybit {
         spiCommand(LUT_BLACK_TO_BLACK);                      //bb b
         spiData(lut_wb, 36);
     }
-/*
-    void show() {
-        setlut();
-        spiCommand(DISPLAY_REFRESH); 
-        uBit.sleep(100);
-        busyWait();
-    }
-*/
+
     void show() {
         spiCommand(RESOLUTION_SETTING);
         spiData(COLS >> 8, 1);        
