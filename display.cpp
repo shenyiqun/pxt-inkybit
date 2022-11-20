@@ -203,7 +203,7 @@ namespace inkybit {
 	    }
         CS.setDigitalValue(CS_INACTIVE);
     }
-#if 0
+#if 1
     void clear(void) {
         spiCommand(RESOLUTION_SETTING);
         spiData(COLS >> 8, 1);
@@ -252,27 +252,57 @@ namespace inkybit {
         buf_b[offset] = byte_b;
         //buf_r[offset] = byte_r;
     }
-    
+/*
+    void show() {
+        RESET.setDigitalValue(0);
+        uBit.sleep(100);
+        RESET.setDigitalValue(1);
+        uBit.sleep(100);
+
+        spiCommand(0x12);
+        uBit.sleep(500);
+        busyWait();
+
+        spiCommand(DRIVER_CONTROL, {ROWS - 1, (ROWS - 1) >> 8, 0x00});
+        spiCommand(WRITE_DUMMY, {0x1B});
+        spiCommand(WRITE_GATELINE, {0x0B});
+        spiCommand(DATA_MODE, {0x03});
+        spiCommand(SET_RAMXPOS, {0x00, COLS / 8 - 1});
+        spiCommand(SET_RAMYPOS, {0x00, 0x00, (ROWS - 1) & 0xFF, (ROWS - 1) >> 8});
+        spiCommand(WRITE_VCOM, {0x70});
+        spiCommand(WRITE_LUT, luts, sizeof(luts));
+        spiCommand(SET_RAMXCOUNT, {0x00});
+        spiCommand(SET_RAMYCOUNT, {0x00, 0x00});
+        
+        spiCommand(WRITE_RAM);
+        spiData(buf_b, (COLS / 8) * ROWS);
+        spiCommand(WRITE_ALTRAM);
+        spiData(buf_r, (COLS / 8) * ROWS);
+
+        busyWait();
+        spiCommand(MASTER_ACTIVATE);
+    }
+*/
+    //%
     void setlut(void) {
         unsigned int count;     
 
         spiCommand(LUT_FOR_VCOM);                            //vcom
-        spiData(lut_vcom0, 44);
+        spiData(lut_vcom0, 36);
         
         spiCommand(LUT_WHITE_TO_WHITE);                      //ww --
-        spiData(lut_ww, 42); 
+        spiData(lut_ww, 36); 
         
         spiCommand(LUT_BLACK_TO_WHITE);                      //bw r
-        spiData(lut_bw, 42);
+        spiData(lut_bw, 36);
 
         spiCommand(LUT_WHITE_TO_BLACK);                      //wb w
-        spiData(lut_bb, 42);
+        spiData(lut_bb, 36);
 
         spiCommand(LUT_BLACK_TO_BLACK);                      //bb b
-        spiData(lut_wb, 42);
+        spiData(lut_wb, 36);
     }
 
-    //%
     void show() {
         spiCommand(RESOLUTION_SETTING);
         spiData(COLS >> 8, 1);        
@@ -302,7 +332,7 @@ namespace inkybit {
         busyWait();
     }
 
-    void reset() {
+    void reset(void) {
         RESET.setDigitalValue(0);
         uBit.sleep(2);
         RESET.setDigitalValue(1);
